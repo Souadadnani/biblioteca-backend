@@ -25,5 +25,12 @@ export default class LibrosRepositoryPostgresSQL implements LibrosRepository {
         }
         return libroBD;
     }
-
+            /* select * from libros 
+            where id in(
+                select id from 
+                ejemplares
+                count(disponibles) 
+            ) 
+            limit 10 offset 0
+            */
 }
