@@ -1,3 +1,4 @@
+import Libro from "../domain/Libro";
 import LibrosRepository from "../domain/libros.repository";
 
 export default class LibrosUseCases {
@@ -6,5 +7,8 @@ export default class LibrosUseCases {
 
     getPaginasListables(){
         return this.librosRepository.getPaginasListables();
+    }
+    getEjemplaresDisp(libro: Libro){
+        return this.librosRepository.getEjemplaresDisp(libro);
     }
 }
