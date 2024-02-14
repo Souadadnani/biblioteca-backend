@@ -8,7 +8,11 @@ export default class LibrosUseCases {
     getPaginasListables(){
         return this.librosRepository.getPaginasListables();
     }
-    getEjemplaresDisp(libro: Libro){
-        return this.librosRepository.getEjemplaresDisp(libro);
+    getEjemplaresDisp(pagina: number){
+        return this.librosRepository.getEjemplaresDisp(pagina);
+    }
+
+    getLibrosBuscados(buscada: string, pagina: number){
+        return this.librosRepository.getLibrosBuscados(buscada, pagina);
     }
 }

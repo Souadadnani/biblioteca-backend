@@ -1,4 +1,4 @@
-import Libro from "./Libro";
+import Libro from "../../libros/domain/Libro";
 
 export default interface Ejemplar {
     id?: number,

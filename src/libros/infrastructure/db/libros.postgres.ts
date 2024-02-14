@@ -10,27 +10,37 @@ export default class LibrosRepositoryPostgresSQL implements LibrosRepository {
         const numPagListables: number = result[0];   
         return numPagListables;
     }
-    async getEjemplaresDisp(libro: Libro): Promise<Libro> {
-        const result: any[] = await executeQuery(`select count(disponibles) from ejemplares where libro='${libro.id}'`);
-        return this.getLibro(libro);
+    async getEjemplaresDisp(pagina: number): Promise<Libro[]> {
+        const query = `select *, (select count(*) from ejemplares where disponibles='true' and libro=libros.id) as disponibles from libros order by id asc
+        limit 10 offset ${pagina} * 10`;
+        const result: any[] = await executeQuery(query);    
+        const libros: Libro[] = result.map(libro=>{
+            const libroBD: Libro ={
+                id: libro.id,
+                titulo: libro.titulo,
+                autor: libro.autor,
+                disponibles: libro.disponibles,
+            }
+            return libroBD;
+        })
+        return libros;
     }
 
-    async getLibro(libro: Libro): Promise<Libro>{
-        const result: any[] = await executeQuery(`select * from libros where id='${libro.id}'`);
-        const libroBD: Libro ={
-            id: result[0].id,
-            titulo: result[0].titulo,
-            autor: result[0].autor,
-            disponibles: result[0].disponibles,
-        }
-        return libroBD;
+    async getLibrosBuscados(buscada: string, pagina: number): Promise<Libro[]>{
+        const query = `select *, (select count(*) from ejemplares where disponibles = 'true' and libro = libros.id) as disponibles
+        from libros where titulo like '%${buscada}%' order by id asc limit 10 offset ${pagina} * 10`;
+        const result: any[] = await executeQuery(query);
+        const libros: Libro[] = result.map(libro=>{
+            const libroBD: Libro ={
+                id: libro.id,
+                titulo: libro.titulo,
+                autor: libro.autor,
+                disponibles: libro.disponibles,
+            }
+            return libroBD;
+        })
+        return libros;
     }
-            /* select * from libros 
-            where id in(
-                select id from 
-                ejemplares
-                count(disponibles) 
-            ) 
-            limit 10 offset 0
-            */
+
+    
 }
