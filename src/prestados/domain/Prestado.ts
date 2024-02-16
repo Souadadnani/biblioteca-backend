@@ -3,7 +3,7 @@ import Ejemplar from "./Ejemplar";
 
 export default interface Prestado {
     usuario: Usuario,
-    ejemplar: Ejemplar,
-    fechaPrestamo: Date,
-    fechaDevolucion: Date
+    ejemplar: Ejemplar | number,
+    fechaPrestamo?: string,
+    fechaDevolucion?: Date
 }

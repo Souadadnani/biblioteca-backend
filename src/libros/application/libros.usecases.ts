@@ -15,4 +15,8 @@ export default class LibrosUseCases {
     getLibrosBuscados(buscada: string, pagina: number){
         return this.librosRepository.getLibrosBuscados(buscada, pagina);
     }
+
+    getNumPagBusqueda(buscada: string){
+        return this.librosRepository.getNumPagBusqueda(buscada);
+    }
 }

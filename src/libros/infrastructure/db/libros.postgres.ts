@@ -6,12 +6,12 @@ import Libro from "../../domain/Libro";
 export default class LibrosRepositoryPostgresSQL implements LibrosRepository {
 
     async getPaginasListables(): Promise<number> {      
-        const result: any[] = await executeQuery(`select count(*)/10 from libros`);     
-        const numPagListables: number = result[0];   
-        return numPagListables;
+        const result: any[] = await executeQuery(`select count(*)/10 as numpaginas from libros`);     
+        return parseInt(result[0].numpaginas);
     }
+
     async getEjemplaresDisp(pagina: number): Promise<Libro[]> {
-        const query = `select *, (select count(*) from ejemplares where disponibles='true' and libro=libros.id) as disponibles from libros order by id asc
+        const query = `select *, (select count(*) from ejemplares where disponible='true' and libro=libros.id) as disponibles from libros order by id asc
         limit 10 offset ${pagina} * 10`;
         const result: any[] = await executeQuery(query);    
         const libros: Libro[] = result.map(libro=>{
@@ -27,7 +27,7 @@ export default class LibrosRepositoryPostgresSQL implements LibrosRepository {
     }
 
     async getLibrosBuscados(buscada: string, pagina: number): Promise<Libro[]>{
-        const query = `select *, (select count(*) from ejemplares where disponibles = 'true' and libro = libros.id) as disponibles
+        const query = `select *, (select count(*) from ejemplares where disponible = 'true' and libro = libros.id) as disponibles
         from libros where titulo like '%${buscada}%' order by id asc limit 10 offset ${pagina} * 10`;
         const result: any[] = await executeQuery(query);
         const libros: Libro[] = result.map(libro=>{
@@ -42,5 +42,9 @@ export default class LibrosRepositoryPostgresSQL implements LibrosRepository {
         return libros;
     }
 
+    async getNumPagBusqueda(buscada: string): Promise<number> {
+        const result: any[] = await executeQuery(`select count(*)/10 as numpaginas from libros where titulo like '%${buscada}%'`);
+        return parseInt(result[0].numpaginas);
+    }
     
 }
