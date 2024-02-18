@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { isAuth } from "../../../context/security/auth";
 import Prestado from "../../domain/Prestado";
 import Ejemplar from "../../domain/Ejemplar";
+import Usuario from "../../../usuarios/domain/Usuario";
 
 const router = express.Router();
 const prestadosRepositoryPostgres: PrestadosRepositoryPostgreSQL = new PrestadosRepositoryPostgreSQL();
@@ -21,6 +22,27 @@ router.post("/:libro", isAuth, async (req: Request, res: Response) =>{
     }
     const prestadoBD = await prestadosUseCases.addPrestado(prestado);
     res.json(prestadoBD);
+});
+
+router.get("", isAuth, async (req: Request, res: Response) => {
+    const email = req.body.emailPL;
+    const usuario: Usuario = {email};
+    const librosPrestados = await prestadosUseCases.mostrarLibrosPrestados(usuario);
+    res.json(librosPrestados);
+});
+
+router.put("/:ejemplar", isAuth, async(req: Request, res: Response)=>{
+    const ejemplar = parseInt(req.params.ejemplar);
+    const email = req.body.emailPL;
+    const usuario: Usuario = {email};
+    const prestado: Prestado = {
+        usuario,
+        ejemplar,
+        fechaDevolucion: new Date().toISOString() 
+    }
+    console.log(prestado);
+    const devuelto = await prestadosUseCases.devolverPrestado(prestado);
+    res.json(devuelto);
 });
 
 export default router;

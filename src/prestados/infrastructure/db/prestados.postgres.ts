@@ -1,5 +1,6 @@
 import executeQuery from "../../../context/connector/postgres.connector";
 import Libro from "../../../libros/domain/Libro";
+import Usuario from "../../../usuarios/domain/Usuario";
 import Ejemplar from "../../domain/Ejemplar";
 import Prestado from "../../domain/Prestado";
 import PrestadosRepository from "../../domain/prestados.repository";
@@ -33,6 +34,45 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
         }
         console.log(prestado);       
         return prestado;
+    }
+
+    async mostrarLibrosPrestados(usuario: Usuario): Promise<Prestado[]> {
+        const query = `select l.*, e.id as ejemplar, p.fechaprestamo from libros l left join ejemplares e on l.id=e.libro
+        left join prestamos p on e.id=p.ejemplar where p.usuario='${usuario.email}' and e.disponible='false'`;
+        const prestadosBD: any[] = await executeQuery(query);
+        console.log(prestadosBD);
+        const librosPrestados: Prestado[] = prestadosBD.map(item=>{
+            const libro: Libro ={
+                id: item.id,
+                titulo: item.titulo,
+                autor: item.autor
+            }
+            const ejemplar: Ejemplar = {
+                id: item.ejemplar,
+                libro: libro
+            }
+            const prestado: Prestado = {
+                ejemplar: ejemplar,
+                fechaPrestamo: item.fechaPrestamo
+            }
+            return prestado
+        });
+        return librosPrestados;
+    }
+
+    async devolverPrestado(prestado: Prestado): Promise<Prestado> {
+        const result: any[] = await executeQuery(`update prestamos set fechadevolucion='${prestado.fechaDevolucion}' where usuario='${prestado.usuario?.email}' returning*`);
+        console.log(result);
+        const devuelto: Prestado = {
+            usuario: result[0].usuario,
+            ejemplar: result[0].ejemplar,
+            fechaPrestamo: result[0].fechaPrestamo,
+            fechaDevolucion: result[0].fechaDevolucion
+        }
+        if(devuelto){
+            await executeQuery(`update ejemplares set disponible='true' where id=${devuelto.ejemplar}`);
+        }
+        return devuelto;
     }
 }
 

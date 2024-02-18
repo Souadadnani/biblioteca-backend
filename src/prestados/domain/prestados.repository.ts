@@ -1,8 +1,9 @@
-import Libro from "../../libros/domain/Libro";
-import Ejemplar from "./Ejemplar";
+import Usuario from "../../usuarios/domain/Usuario";
 import Prestado from "./Prestado";
 
 export default interface PrestadosRepository {
     prestarEjemplar(id: number): Promise<number>;
     addPrestado(prestamo: Prestado): Promise<Prestado>;
+    mostrarLibrosPrestados(usuario: Usuario): Promise<Prestado[]>;
+    devolverPrestado(prestado: Prestado): Promise<Prestado>;
 }
