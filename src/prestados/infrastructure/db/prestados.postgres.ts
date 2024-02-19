@@ -13,13 +13,6 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
         console.log(ejemplarBD);
         console.log(ejemplarBD[0].id);
         return ejemplarBD[0].id;
-       /*  const ejemplar: Ejemplar = {
-            id: ejemplarBD[0].id,
-            libro: ejemplarBD[0].libro,
-            disponible: ejemplarBD[0].disponible
-        }
-        console.log(ejemplar);
-        return ejemplar.id; */
     }
 
     async addPrestado(prestamo: Prestado): Promise<Prestado> {  
@@ -30,8 +23,7 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
             ejemplar: prestadoBD[0].ejemplar,
             usuario: prestadoBD[0].usuario,
             fechaPrestamo: prestadoBD[0].fechaprestamo
-        }
-        console.log(prestado);       
+        }     
         return prestado;
     }
 
