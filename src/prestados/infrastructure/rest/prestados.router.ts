@@ -4,7 +4,6 @@ import PrestadosRepositoryPostgreSQL from "../db/prestados.postgres";
 import { Request, Response } from "express";
 import { isAuth } from "../../../context/security/auth";
 import Prestado from "../../domain/Prestado";
-import Ejemplar from "../../domain/Ejemplar";
 import Usuario from "../../../usuarios/domain/Usuario";
 
 const router = express.Router();
@@ -17,8 +16,7 @@ router.post("/:libro", isAuth, async (req: Request, res: Response) =>{
     const idEjemplar = await prestadosUseCases.prestarLibro(idLibro);
     const prestado: Prestado = {
         ejemplar: idEjemplar,
-        usuario: email,
-        fechaPrestamo: new Date().toISOString()
+        usuario: email
     }
     const prestadoBD = await prestadosUseCases.addPrestado(prestado);
     res.json(prestadoBD);
@@ -37,10 +35,8 @@ router.put("/:ejemplar", isAuth, async(req: Request, res: Response)=>{
     const usuario: Usuario = {email};
     const prestado: Prestado = {
         usuario,
-        ejemplar,
-        fechaDevolucion: new Date().toISOString() 
+        ejemplar
     }
-    console.log(prestado);
     const devuelto = await prestadosUseCases.devolverPrestado(prestado);
     res.json(devuelto);
 });

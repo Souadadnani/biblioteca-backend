@@ -22,15 +22,14 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
         return ejemplar.id; */
     }
 
-    async addPrestado(prestamo: Prestado): Promise<Prestado> {
-        console.log(prestamo.fechaPrestamo);
-        const query = `insert into prestamos(ejemplar, usuario, fechaprestamo) values('${prestamo.ejemplar}', '${prestamo.usuario}', '${prestamo.fechaPrestamo}') returning*`;
+    async addPrestado(prestamo: Prestado): Promise<Prestado> {  
+        const query = `insert into prestamos(ejemplar, usuario, fechaprestamo) values('${prestamo.ejemplar}', '${prestamo.usuario}', now()) returning*`;
         const prestadoBD: any[] = await executeQuery(query);
         console.log(prestadoBD[0].fechaPrestamo);
         const prestado: Prestado = {
             ejemplar: prestadoBD[0].ejemplar,
             usuario: prestadoBD[0].usuario,
-            fechaPrestamo: prestadoBD[0].fechaPrestamo
+            fechaPrestamo: prestadoBD[0].fechaprestamo
         }
         console.log(prestado);       
         return prestado;
@@ -53,7 +52,7 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
             }
             const prestado: Prestado = {
                 ejemplar: ejemplar,
-                fechaPrestamo: item.fechaPrestamo
+                fechaPrestamo: item.fechaprestamo
             }
             return prestado
         });
@@ -61,13 +60,13 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
     }
 
     async devolverPrestado(prestado: Prestado): Promise<Prestado> {
-        const result: any[] = await executeQuery(`update prestamos set fechadevolucion='${prestado.fechaDevolucion}' where usuario='${prestado.usuario?.email}' returning*`);
+        const result: any[] = await executeQuery(`update prestamos set fechadevolucion=now() where usuario='${prestado.usuario?.email}' returning*`);
         console.log(result);
         const devuelto: Prestado = {
             usuario: result[0].usuario,
             ejemplar: result[0].ejemplar,
-            fechaPrestamo: result[0].fechaPrestamo,
-            fechaDevolucion: result[0].fechaDevolucion
+            fechaPrestamo: result[0].fechaprestamo,
+            fechaDevolucion: result[0].fechadevolucion
         }
         if(devuelto){
             await executeQuery(`update ejemplares set disponible='true' where id=${devuelto.ejemplar}`);
