@@ -18,7 +18,7 @@ router.post("/registro", async(req: Request, res: Response)=>{
         apellidos
     }
     const usuario = await usuariosUseCases.registrar(usuarioAPI);
-    res.json({email: usuario.email});
+    res.json({email: usuario.email, nombre: usuario.nombre});
 });
 
 router.post("/login", async(req: Request, res: Response)=>{
