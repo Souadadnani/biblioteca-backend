@@ -31,7 +31,6 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
         const query = `select l.*, e.id as ejemplar, p.fechaprestamo from libros l left join ejemplares e on l.id=e.libro
         left join prestamos p on e.id=p.ejemplar where p.usuario='${usuario.email}' and e.disponible='false'`;
         const prestadosBD: any[] = await executeQuery(query);
-        console.log(prestadosBD);
         const librosPrestados: Prestado[] = prestadosBD.map(item=>{
             const libro: Libro ={
                 id: item.id,
@@ -53,7 +52,6 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
 
     async devolverPrestado(prestado: Prestado): Promise<Prestado> {
         const result: any[] = await executeQuery(`update prestamos set fechadevolucion=now() where usuario='${prestado.usuario?.email}' returning*`);
-        console.log(result);
         const devuelto: Prestado = {
             usuario: result[0].usuario,
             ejemplar: result[0].ejemplar,
