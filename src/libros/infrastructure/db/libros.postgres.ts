@@ -28,7 +28,7 @@ export default class LibrosRepositoryPostgresSQL implements LibrosRepository {
 
     async getLibrosBuscados(buscada: string, pagina: number): Promise<Libro[]>{
         const query = `select *, (select count(*) from ejemplares where disponible = 'true' and libro = libros.id) as disponibles
-        from libros where titulo like '%${buscada}%' order by id asc limit 10 offset ${pagina} * 10`;
+        from libros where LOWER(titulo) like '%${buscada.toLocaleLowerCase()}%' order by id asc limit 10 offset ${pagina} * 10`;
         const result: any[] = await executeQuery(query);
         const libros: Libro[] = result.map(libro=>{
             const libroBD: Libro ={
@@ -43,7 +43,7 @@ export default class LibrosRepositoryPostgresSQL implements LibrosRepository {
     }
 
     async getNumPagBusqueda(buscada: string): Promise<number> {
-        const result: any[] = await executeQuery(`select count(*)/10 as numpaginas from libros where titulo like '%${buscada}%'`);
+        const result: any[] = await executeQuery(`select count(*)/10 as numpaginas from libros where LOWER(titulo) like '%${buscada.toLocaleLowerCase()}%'`);
         return parseInt(result[0].numpaginas);
     }
     

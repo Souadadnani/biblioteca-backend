@@ -10,15 +10,12 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
     async prestarEjemplar(id: number): Promise<number> {
         const query = `update ejemplares set disponible='false' where id=(select id from ejemplares where libro=${id} limit 1) returning*`;
         const ejemplarBD: any[] = await executeQuery(query);
-        console.log(ejemplarBD);
-        console.log(ejemplarBD[0].id);
         return ejemplarBD[0].id;
     }
 
     async addPrestado(prestamo: Prestado): Promise<Prestado> {  
         const query = `insert into prestamos(ejemplar, usuario, fechaprestamo) values('${prestamo.ejemplar}', '${prestamo.usuario}', now()) returning*`;
         const prestadoBD: any[] = await executeQuery(query);
-        console.log(prestadoBD[0].fechaPrestamo);
         const prestado: Prestado = {
             ejemplar: prestadoBD[0].ejemplar,
             usuario: prestadoBD[0].usuario,
@@ -51,7 +48,7 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
     }
 
     async devolverPrestado(prestado: Prestado): Promise<Prestado> {
-        const result: any[] = await executeQuery(`update prestamos set fechadevolucion=now() where usuario='${prestado.usuario?.email}' returning*`);
+        const result: any[] = await executeQuery(`update prestamos set fechadevolucion=now() where ejemplar=${prestado.ejemplar} and usuario='${prestado.usuario?.email}' returning*`);
         const devuelto: Prestado = {
             usuario: result[0].usuario,
             ejemplar: result[0].ejemplar,
@@ -61,7 +58,7 @@ export default class PrestadosRepositoryPostgreSQL implements PrestadosRepositor
         if(devuelto){
             await executeQuery(`update ejemplares set disponible='true' where id=${devuelto.ejemplar}`);
         }
-        return devuelto;
+        return devuelto;     
     }
 }
 
