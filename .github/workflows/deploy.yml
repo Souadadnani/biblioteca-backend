@@ -13,9 +13,9 @@ jobs:
       - name: Conexion a ec2 y pull cambios
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secret.EC2_HOST }}
-          username: ${{ secret.EC2_USERNAME }}
-          key: ${{ secret.SSH_PRIVATE_KEY }}
+          host: ${{ Secrets.EC2_HOST }}
+          username: ${{ Secrets.EC2_USERNAME }}
+          key: ${{ Secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/biblioteca/biblioteca-backend
             git pull
