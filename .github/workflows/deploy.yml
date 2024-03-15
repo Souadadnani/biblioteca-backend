@@ -8,6 +8,7 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    node-version: '21'
 
     steps:
       - name: Conexion a ec2 y pull cambios
