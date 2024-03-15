@@ -19,6 +19,4 @@ jobs:
           script: |
             cd /home/ubuntu/biblioteca/biblioteca-backend
             git pull
-            rm -r dist
-            npm run build
-            cp -r dist/* /var/www/html
+
