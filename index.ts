@@ -10,8 +10,9 @@ import prestadosRouter from "./src/prestados/infrastructure/rest/prestados.route
 
 dotenv.config();
 const port = process.env.PORT;
+const ruta = process.env.URL;
 
-const allowedOrigins = ["http://44.198.34.104:8080"];
+const allowedOrigins = [`${ruta}`];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
 };
